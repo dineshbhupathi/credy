@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from .serializers import *
 from rest_framework.response import Response
@@ -10,14 +9,16 @@ from rest_framework.pagination import PageNumberPagination
 from credy.pagination import PaginationHandler
 from credy import settings
 import requests
-from rest_framework.decorators import api_view, renderer_classes
+from rest_framework.decorators import api_view
 from requests.auth import HTTPBasicAuth
 from rest_framework.generics import *
-from django.http import HttpResponse
 
+#pagination
 class UsersPagination(PageNumberPagination):
     page_size_query_param = 'user'
     page_size = 10
+
+# register user api with response jwt token
 class CreateUserAPIView(APIView, PaginationHandler):
     # Allow any user (authenticated or not) to access this url
     pagination_class = UsersPagination
@@ -68,7 +69,7 @@ class CreateUserAPIView(APIView, PaginationHandler):
                 return Response(res)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+#movies fetch api with third party api
 @api_view(['GET'])
 def MoviesList(request):
     page=request.GET.get("page")
@@ -134,24 +135,3 @@ def requestcount(request):
         "requests":request.session['hit']
     }
     return Response(dic)
-
-#sc
-class LocalMovies(ListCreateAPIView):
-    serializer_class = MoviesSerializer
-    queryset = Movies.objects.all()
-
-
-class feed_data(APIView):
-    def get(self, request):
-        for i in range(1,4547):
-            print(i)
-            url = requests.get("https://demo.credy.in/api/v1/maya/movies/?page={}".format(i),
-                               auth=HTTPBasicAuth('iNd3jDMYRKsN1pjQPMRz2nrq7N99q4Tsp9EY9cM0',
-                                                  'Ne5DoTQt7p8qrgkPdtenTK8zd6MorcCR5vXZIJNfJwvfafZfcOs4reyasVYddTyXCz9hcL5FGGIVxw3q02ibnBLhblivqQTp4BIC93LZHj4OppuHQUzwugcYu7TIC5H1'))
-            data = url.json()
-            serializer = MoviesSerializer(data=data)
-            print(serializer)
-        if serializer.is_valid():
-            serializer.save()
-        return Response({"success"})
-

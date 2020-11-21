@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import *
-from requests.auth import HTTPBasicAuth
 
 class UserSerializer(serializers.ModelSerializer):
     date_joined = serializers.ReadOnlyField()
