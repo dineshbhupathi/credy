@@ -27,7 +27,7 @@ class Command(BaseCommand):
             first_page = session.get(base_url,params=payload,headers=headers,auth=auth).json()
             yield first_page
 
-            for page in range(2000, 2500):
+            for page in range(1, 4547):
                 new_payload = payload
                 new_payload['page'] = page
                 print(page,'pa')
